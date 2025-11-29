@@ -1,62 +1,534 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Chen Dahe | Homepage</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: radial-gradient(circle at top, #111827, #020617);
-      color: #e5e7eb;
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .card {
-      padding: 2.5rem 3rem;
-      border-radius: 1.5rem;
-      background: rgba(15,23,42,0.9);
-      box-shadow: 0 24px 80px rgba(0,0,0,0.6);
-      text-align: center;
-      max-width: 520px;
-    }
-    h1 {
-      font-size: 2.2rem;
-      margin-bottom: 0.5rem;
-    }
-    p {
-      margin: 0.25rem 0;
-      line-height: 1.6;
-    }
-    .tagline {
-      color: #38bdf8;
-      font-weight: 600;
-      margin-bottom: 1rem;
-    }
-    .btn {
-      display: inline-block;
-      margin-top: 1.5rem;
-      padding: 0.75rem 1.5rem;
-      border-radius: 999px;
-      border: 1px solid #38bdf8;
-      text-decoration: none;
-      color: #e5e7eb;
-      font-size: 0.95rem;
-      letter-spacing: 0.03em;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chen Dahe | Portfolio</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* --- 核心变量 --- */
+        :root {
+            --bg-color: #050505;
+            --text-main: #ffffff;
+            --text-muted: #a1a1aa;
+            --accent-color: #64ffda; /* 科技青 */
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --card-hover: rgba(255, 255, 255, 0.08);
+        }
+
+        /* --- 基础重置 --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        h1, h2, h3, .brand {
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        a { text-decoration: none; color: inherit; transition: 0.3s; }
+        ul { list-style: none; }
+
+        /* --- Three.js 背景容器 --- */
+        #canvas-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.6; /* 让背景稍微暗一点，突出文字 */
+        }
+
+        /* --- 导航栏 --- */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 1.5rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            transition: all 0.3s ease;
+        }
+
+        .brand { font-size: 1.5rem; font-weight: 700; letter-spacing: -0.5px; }
+        
+        .nav-links { display: flex; gap: 2rem; }
+        .nav-links a { 
+            font-size: 0.9rem; 
+            color: var(--text-muted); 
+            position: relative;
+        }
+        .nav-links a:hover, .nav-links a.active { color: var(--accent-color); }
+        .nav-links a::after {
+            content: ''; position: absolute; width: 0; height: 1px;
+            bottom: -5px; left: 0; background: var(--accent-color);
+            transition: 0.3s;
+        }
+        .nav-links a:hover::after { width: 100%; }
+
+        /* --- 通用布局 --- */
+        section {
+            min-height: 100vh;
+            padding: 100px 10%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+        }
+
+        .section-title {
+            font-size: 3rem;
+            margin-bottom: 3rem;
+            position: relative;
+            display: inline-block;
+            background: linear-gradient(90deg, #fff, #a1a1aa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* --- Hero Section --- */
+        #home {
+            align-items: flex-start;
+            padding-top: 150px;
+        }
+        .hero-greeting { color: var(--accent-color); font-family: 'Space Grotesk'; margin-bottom: 1rem; }
+        .hero-name { 
+            font-size: clamp(3rem, 8vw, 6rem); 
+            font-weight: 700; 
+            line-height: 1.1;
+            margin-bottom: 1rem;
+        }
+        .hero-tagline {
+            font-size: clamp(1.5rem, 4vw, 2.5rem);
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+        }
+        .hero-bio {
+            max-width: 600px;
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            margin-bottom: 3rem;
+        }
+        .btn {
+            padding: 12px 30px;
+            border: 1px solid var(--accent-color);
+            color: var(--accent-color);
+            border-radius: 4px;
+            font-family: 'Space Grotesk';
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+        }
+        .btn:hover { background: rgba(100, 255, 218, 0.1); }
+
+        /* --- Projects Grid --- */
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        .project-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            padding: 2rem;
+            border-radius: 12px;
+            transition: transform 0.3s, border-color 0.3s;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        .project-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent-color);
+            background: var(--card-hover);
+        }
+        .project-card h3 { font-size: 1.5rem; margin-bottom: 1rem; }
+        .project-card p { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 1.5rem; }
+        .project-links a { margin-right: 15px; font-size: 1.2rem; }
+        .project-links a:hover { color: var(--accent-color); }
+
+        /* --- Skills Section --- */
+        .skills-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .skill-tag {
+            padding: 10px 20px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 50px;
+            border: 1px solid transparent;
+            font-family: 'Space Grotesk';
+            transition: 0.3s;
+        }
+        .skill-tag:hover {
+            border-color: var(--accent-color);
+            color: var(--accent-color);
+            transform: scale(1.05);
+        }
+
+        /* --- Contact Section --- */
+        .contact-content { text-align: center; max-width: 600px; margin: 0 auto; }
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+        .social-links a {
+            font-size: 2rem;
+            color: var(--text-muted);
+        }
+        .social-links a:hover { color: var(--accent-color); transform: translateY(-3px); }
+
+        /* --- Footer --- */
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+
+        /* --- 简单的加载动画类 (由 JS 触发) --- */
+        .fade-in { opacity: 0; transform: translateY(20px); transition: opacity 0.8s ease, transform 0.8s ease; }
+        .fade-in.visible { opacity: 1; transform: translateY(0); }
+
+        /* 移动端适配 */
+        @media (max-width: 768px) {
+            section { padding: 80px 5%; }
+            .nav-links { display: none; } /* 极简版，移动端隐藏菜单或后续添加汉堡菜单 */
+            .section-title { font-size: 2rem; }
+        }
+    </style>
 </head>
 <body>
-  <div class="card">
-    <h1>Chen Dahe</h1>
-    <p class="tagline">Computer Science Student · AI & Privacy Enthusiast</p>
-    <p>Hi, I’m an international student exploring AI, machine learning and privacy.</p>
-    <p>这一页只是占位的首页，后面会换成沉浸式 3D 效果版本。</p>
-    <a href="#projects" class="btn">Coming soon · 敬请期待</a>
-  </div>
+
+    <div id="canvas-container"></div>
+
+    <nav>
+        <div class="brand" id="nav-name">CD.</div>
+        <div class="nav-links">
+            <a href="#home">Home</a>
+            <a href="#about">About</a>
+            <a href="#projects">Projects</a>
+            <a href="#skills">Skills</a>
+            <a href="#contact">Contact</a>
+        </div>
+    </nav>
+
+    <div id="content-app">
+        </div>
+
+    <footer>
+        <p>&copy; 2024 <span id="footer-name"></span>. Built with Vanilla JS & Three.js.</p>
+    </footer>
+
+    <script src="https://unpkg.com/three@0.160.0/build/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+    <script>
+        // ==========================================
+        // 1. 用户配置区域 (修改这里即可更新网站内容)
+        // ==========================================
+        const SITE_CONFIG = {
+            name: "Chen Dahe",
+            navName: "Chen.", // 导航栏左上角的简写
+            tagline: "Computer Science Student · AI & Privacy Enthusiast",
+            // 自我介绍：支持 HTML 标签，比如 <br> 换行
+            bio: [
+                "I am an international student pursuing Computer Science.",
+                "My passion lies in the intersection of Artificial Intelligence and Data Privacy.",
+                "Currently researching robust ML models and building interactive web experiences."
+            ],
+            // 关于我页面的详细介绍
+            about: "I'm a developer and researcher based in the US. I enjoy turning complex data privacy problems into accessible, user-friendly solutions. When I'm not coding, you can find me exploring new coffee shops or reading about digital rights.",
+            
+            projects: [
+                { 
+                    title: "Privacy Shield AI", 
+                    description: "An open-source tool that sanitizes datasets for machine learning training, ensuring differential privacy compliance.",
+                    tags: ["Python", "PyTorch", "Privacy"],
+                    link: "#",
+                    github: "#" 
+                },
+                { 
+                    title: "Neural Vis", 
+                    description: "A 3D interactive visualization of neural network layers using WebGL and Three.js.", 
+                    tags: ["JavaScript", "Three.js", "WebGL"],
+                    link: "#",
+                    github: "#" 
+                },
+                { 
+                    title: "SecureChat", 
+                    description: "End-to-end encrypted messaging app prototype focused on metadata protection.", 
+                    tags: ["Rust", "WASM", "Cryptography"],
+                    link: "#",
+                    github: "#" 
+                }
+            ],
+            skills: [
+                "Python", "PyTorch", "TensorFlow", 
+                "JavaScript (ES6+)", "Three.js", "React",
+                "Data Privacy", "Cryptography", "Git", "Linux"
+            ],
+            social: {
+                github: "https://github.com/DaheChen",
+                linkedin: "#",
+                email: "mailto:example@example.com"
+            }
+        };
+
+        // ==========================================
+        // 2. DOM 渲染逻辑 (将配置填入 HTML)
+        // ==========================================
+        function renderContent() {
+            // 更新通用信息
+            document.title = `${SITE_CONFIG.name} | Portfolio`;
+            document.getElementById('nav-name').innerText = SITE_CONFIG.navName;
+            document.getElementById('footer-name').innerText = SITE_CONFIG.name;
+
+            const app = document.getElementById('content-app');
+            
+            // 构建 HTML 结构
+            app.innerHTML = `
+                <section id="home">
+                    <div class="fade-in">
+                        <p class="hero-greeting">Hi, my name is</p>
+                        <h1 class="hero-name">${SITE_CONFIG.name}.</h1>
+                        <h2 class="hero-tagline">${SITE_CONFIG.tagline}</h2>
+                        <div class="hero-bio">
+                            ${SITE_CONFIG.bio.map(line => `<p>${line}</p>`).join('')}
+                        </div>
+                        <a href="#projects" class="btn">Check out my work</a>
+                    </div>
+                </section>
+
+                <section id="about">
+                    <h2 class="section-title fade-in">01. About Me</h2>
+                    <div class="fade-in" style="max-width: 700px; color: var(--text-muted); font-size: 1.1rem;">
+                        <p>${SITE_CONFIG.about}</p>
+                    </div>
+                </section>
+
+                <section id="projects">
+                    <h2 class="section-title fade-in">02. Some Things I've Built</h2>
+                    <div class="projects-grid">
+                        ${SITE_CONFIG.projects.map(project => `
+                            <div class="project-card fade-in">
+                                <div style="display:flex; justify-content:space-between; align-items:start; margin-bottom:1rem;">
+                                    <i class="fa-regular fa-folder" style="font-size: 2rem; color: var(--accent-color);"></i>
+                                    <div class="project-links">
+                                        ${project.github ? `<a href="${project.github}" target="_blank"><i class="fa-brands fa-github"></i></a>` : ''}
+                                        ${project.link ? `<a href="${project.link}" target="_blank"><i class="fa-solid fa-arrow-up-right-from-square"></i></a>` : ''}
+                                    </div>
+                                </div>
+                                <h3>${project.title}</h3>
+                                <p>${project.description}</p>
+                                <div style="font-size: 0.8rem; color: var(--text-muted); font-family: 'Space Grotesk';">
+                                    ${project.tags.join(' &nbsp; ')}
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </section>
+
+                <section id="skills">
+                    <h2 class="section-title fade-in">03. Tech Stack</h2>
+                    <div class="skills-container fade-in">
+                        ${SITE_CONFIG.skills.map(skill => `<span class="skill-tag">${skill}</span>`).join('')}
+                    </div>
+                </section>
+
+                <section id="contact">
+                    <div class="contact-content fade-in">
+                        <p class="hero-greeting">04. What's Next?</p>
+                        <h2 style="font-size: 3rem; margin-bottom: 1rem;">Get In Touch</h2>
+                        <p style="color: var(--text-muted); margin-bottom: 2rem;">
+                            I'm currently looking for new opportunities in AI & Privacy research. 
+                            Whether you have a question or just want to say hi, I'll try my best to get back to you!
+                        </p>
+                        <a href="${SITE_CONFIG.social.email}" class="btn">Say Hello</a>
+                        
+                        <div class="social-links">
+                            <a href="${SITE_CONFIG.social.github}" target="_blank"><i class="fa-brands fa-github"></i></a>
+                            <a href="${SITE_CONFIG.social.linkedin}" target="_blank"><i class="fa-brands fa-linkedin"></i></a>
+                            <a href="${SITE_CONFIG.social.email}"><i class="fa-solid fa-envelope"></i></a>
+                        </div>
+                    </div>
+                </section>
+            `;
+        }
+
+        // ==========================================
+        // 3. Three.js 场景逻辑 (粒子网络背景)
+        // ==========================================
+        function initThreeJS() {
+            const container = document.getElementById('canvas-container');
+            
+            // 场景设置
+            const scene = new THREE.Scene();
+            // 添加一点雾化效果，让深处更神秘
+            scene.fog = new THREE.FogExp2(0x050505, 0.002);
+
+            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.z = 30;
+
+            const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(window.devicePixelRatio);
+            container.appendChild(renderer.domElement);
+
+            // 创建粒子
+            const geometry = new THREE.BufferGeometry();
+            const count = 2000;
+            const positions = new Float32Array(count * 3);
+            const velocities = []; // 存储移动速度
+
+            for(let i = 0; i < count * 3; i++) {
+                // 随机分布在 -50 到 50 的空间内
+                positions[i] = (Math.random() - 0.5) * 100;
+            }
+
+            // 初始化速度
+            for(let i = 0; i < count; i++) {
+                velocities.push({
+                    x: (Math.random() - 0.5) * 0.02,
+                    y: (Math.random() - 0.5) * 0.02,
+                    z: (Math.random() - 0.5) * 0.02
+                });
+            }
+
+            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+
+            // 粒子材质
+            const material = new THREE.PointsMaterial({
+                size: 0.15,
+                color: 0x64ffda, // 使用配置里的 accent color
+                transparent: true,
+                opacity: 0.8,
+            });
+
+            const particles = new THREE.Points(geometry, material);
+            scene.add(particles);
+
+            // 鼠标交互变量
+            let mouseX = 0;
+            let mouseY = 0;
+            let targetX = 0;
+            let targetY = 0;
+
+            // 监听鼠标移动
+            document.addEventListener('mousemove', (event) => {
+                mouseX = event.clientX - window.innerWidth / 2;
+                mouseY = event.clientY - window.innerHeight / 2;
+            });
+
+            // 窗口大小调整
+            window.addEventListener('resize', () => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            });
+
+            // 动画循环
+            const clock = new THREE.Clock();
+            
+            function animate() {
+                requestAnimationFrame(animate);
+
+                const time = clock.getElapsedTime();
+
+                // 简单的自动旋转
+                particles.rotation.y = time * 0.05;
+                particles.rotation.x = time * 0.02;
+
+                // 鼠标视差效果 (Parallax)
+                targetX = mouseX * 0.001;
+                targetY = mouseY * 0.001;
+                
+                // 平滑过渡
+                particles.rotation.y += 0.05 * (targetX - particles.rotation.y);
+                particles.rotation.x += 0.05 * (targetY - particles.rotation.x);
+
+                // 让粒子有轻微的波浪运动
+                const positions = particles.geometry.attributes.position.array;
+                for(let i = 0; i < count; i++) {
+                    const i3 = i * 3;
+                    // 给每个粒子添加微小的随机偏移，模拟呼吸感
+                    // positions[i3 + 1] += Math.sin(time + positions[i3]) * 0.002;
+                }
+                particles.geometry.attributes.position.needsUpdate = true;
+
+                renderer.render(scene, camera);
+            }
+
+            animate();
+        }
+
+        // ==========================================
+        // 4. GSAP 动画逻辑 (滚动显现)
+        // ==========================================
+        function initAnimations() {
+            gsap.registerPlugin(ScrollTrigger);
+
+            // 遍历所有带有 fade-in 类的元素
+            const fadeElements = document.querySelectorAll('.fade-in');
+            
+            fadeElements.forEach((el) => {
+                gsap.fromTo(el, 
+                    { 
+                        opacity: 0, 
+                        y: 30 
+                    },
+                    {
+                        opacity: 1,
+                        y: 0,
+                        duration: 1,
+                        ease: "power3.out",
+                        scrollTrigger: {
+                            trigger: el,
+                            start: "top 85%", // 当元素顶部到达视口 85% 处触发
+                            toggleActions: "play none none reverse"
+                        }
+                    }
+                );
+            });
+        }
+
+        // ==========================================
+        // 5. 初始化执行
+        // ==========================================
+        window.onload = function() {
+            renderContent();   // 1. 渲染 HTML
+            initThreeJS();     // 2. 启动 3D 背景
+            
+            // 稍微延迟一点启动 GSAP，确保 DOM 已经完全插入
+            setTimeout(() => {
+                initAnimations(); // 3. 启动滚动动画
+            }, 100);
+        };
+
+    </script>
 </body>
 </html>
